@@ -65,6 +65,13 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
+        .install-msg {
+            display: none;
+            margin: 20px;
+            font-size: 14px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -75,37 +82,51 @@
             <img src="occ-oversigt.png" alt="Oversigtstegning over Odense Congress Center">
         </div>
         <button id="installBtn" class="install-btn">Install App</button>
+        <p id="installMsg" class="install-msg">To install, tap <b>Share</b> and select <b>Add to Home Screen</b>.</p>
     </div>
 
     <script>
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+        const installMsg = document.getElementById('installMsg');
+
+        // ✅ Check if app is already installed
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('App is already installed');
+        } else {
+            // ✅ Listen for install prompt
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installBtn.style.display = 'block';
+
+                installBtn.addEventListener('click', () => {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted install');
+                        } else {
+                            console.log('User dismissed install');
+                        }
+                        deferredPrompt = null;
+                    });
+                });
+            });
+
+            // ✅ If `beforeinstallprompt` never fires, show manual instructions
+            setTimeout(() => {
+                if (!deferredPrompt) {
+                    installMsg.style.display = 'block';
+                }
+            }, 5000); // Wait 5 seconds before showing message
+        }
+
         // ✅ Register Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
                 .then(() => console.log('Service Worker Registered'))
                 .catch(error => console.log('Service Worker Registration Failed:', error));
         }
-
-        // ✅ PWA Install Button Logic
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'block';
-
-            installBtn.addEventListener('click', () => {
-                installBtn.style.display = 'none';
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(choiceResult => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User installed the app');
-                    }
-                    deferredPrompt = null;
-                });
-            });
-        });
-
     </script>
 </body>
 </html>
