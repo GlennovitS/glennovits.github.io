@@ -18,6 +18,7 @@
             text-align: center;
             background-color: #ffffff;
             overflow-x: hidden;
+            padding-bottom: 90px; /* Ensure content is not hidden behind the floating bar */
         }
 
         .container {
@@ -55,10 +56,19 @@
             touch-action: manipulation;
         }
 
-        .button-container {
+        /* Floating Bar */
+        .floating-bar {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
             display: flex;
             gap: 10px;
-            justify-content: center;
+            padding: 10px 15px;
+            backdrop-filter: blur(10px);
         }
 
         .image-btn {
@@ -68,16 +78,18 @@
             width: 60px;
             height: 60px;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             cursor: pointer;
             color: #000000;
             font-size: 14px;
+            background-color: #d2d2d2; /* Neutral background */
         }
 
-        /* Button Styles */
-        .btn1 { background-color: #d2d2d2; border: none; }  /* White background, black icon */
-        .btn2 { background-color: #8e78c7; border: none; }  /* Blue background, white icon */
-        .btn3 { background-color: #5acff2; border: none; }  /* Teal/Mint background, white icon */
+        /* Active Button Styles */
+        .image-btn.active.btn1 { background-color: #7ab7cf; } 
+        .image-btn.active.btn2 { background-color: #7ab7cf; } 
+        .image-btn.active.btn3 { background-color: #cf7a7a; } 
+        .image-btn.active.btn4 { background-color: #7ab7cf; } 
 
         .image-btn img {
             width: 30px;
@@ -92,24 +104,29 @@
         <div class="image-container">
             <img id="displayImage" src="occ-oversigt.png" alt="Oversigtstegning over Odense Congress Center">
         </div>
-        <div class="button-container">
-            <button class="image-btn btn1" onclick="changeImage(1)">
-                <img src="map.png" alt="Map/Drawing">
-            </button>
-            <button class="image-btn btn2" onclick="changeImage(2)">
-                <img src="group.png" alt="Group of People">
-            </button>
-            <button class="image-btn btn3" onclick="changeImage(3)">
-                <img src="toilet.png" alt="Toilet Sign">
-            </button>
-        </div>
         <br>
         <p id="installMsg" class="install-msg">Tryk på <b>Del</b> og vælg <b>Føj til hjemmeskærm</b> for at gemme som en app</p>
         <button id="installBtn" class="install-btn">Installer som App</button>
     </div>
 
+    <!-- Floating Bar -->
+    <div class="floating-bar">
+        <button class="image-btn btn1 active" onclick="changeImage(1, this)">
+            <img src="map.png" alt="Oversigtskort">
+        </button>
+        <button class="image-btn btn2" onclick="changeImage(3, this)">
+            <img src="toilet.png" alt="Toilet">
+        </button>
+        <button class="image-btn btn3" onclick="changeImage(2, this)">
+            <img src="firstaid.png" alt="Førstehjælp">
+        </button>
+        <button class="image-btn btn4" onclick="changeImage(3, this)">
+            <img src="info.png" alt="Information">
+        </button>
+    </div>
+
     <script>
-        function changeImage(imageIndex) {
+        function changeImage(imageIndex, clickedButton) {
             const imageElement = document.getElementById("displayImage");
 
             if (imageIndex === 1) {
@@ -118,62 +135,21 @@
                 imageElement.src = "occ-staevne.png";
             } else if (imageIndex === 3) {
                 imageElement.src = "occ-toiletter.png";
+            } else if (imageIndex === 4) {
+                imageElement.src = "occ-toiletter.png";
             }
+
+            setActiveButton(clickedButton);
         }
 
-        // ✅ Register Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('Service Worker Registered'))
-                .catch(error => console.log('Service Worker Registration Failed:', error));
-        }
-    </script>
-
-    <script>
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
-        const installMsg = document.getElementById('installMsg');
-
-        // ✅ Check if app is already installed
-        if (window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: minimal-ui)').matches || navigator.standalone) {
-            console.log('App is already installed');
-            installBtn.style.display = 'none';
-            installMsg.style.display = 'none';
-        } else {
-            // ✅ Listen for install prompt
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                installBtn.style.display = 'block';
-
-                installBtn.addEventListener('click', () => {
-                    deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            console.log('User accepted install');
-                            installBtn.style.display = 'none';
-                            installMsg.style.display = 'none';
-                        } else {
-                            console.log('User dismissed install');
-                        }
-                        deferredPrompt = null;
-                    });
-                });
+        function setActiveButton(selectedButton) {
+            // Remove 'active' from all buttons
+            document.querySelectorAll('.image-btn').forEach(btn => {
+                btn.classList.remove('active');
             });
 
-            // ✅ If `beforeinstallprompt` never fires, show manual instructions
-            setTimeout(() => {
-                if (!deferredPrompt) {
-                    installMsg.style.display = 'block';
-                }
-            }, 5000); // Wait 5 seconds before showing message
-        }
-
-        // ✅ Register Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('Service Worker Registered'))
-                .catch(error => console.log('Service Worker Registration Failed:', error));
+            // Add 'active' to clicked button
+            selectedButton.classList.add('active');
         }
     </script>
 </body>

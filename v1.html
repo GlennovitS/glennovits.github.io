@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Regionalstævnet 2025 - Odense Congress Center</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .image-container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            object-fit: cover;
+            touch-action: manipulation;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .image-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #000000;
+            font-size: 14px;
+        }
+
+        /* Button Styles */
+        .btn1 { background-color: #d2d2d2; border: none; }  /* White background, black icon */
+        .btn2 { background-color: #8e78c7; border: none; }  /* Blue background, white icon */
+        .btn3 { background-color: #5acff2; border: none; }  /* Teal/Mint background, white icon */
+
+        .image-btn img {
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Regionalstævne 2025</h1>
+        <h2>Odense Congress Center</h2>
+        <div class="image-container">
+            <img id="displayImage" src="occ-oversigt.png" alt="Oversigtstegning over Odense Congress Center">
+        </div>
+        <div class="button-container">
+            <button class="image-btn btn1" onclick="changeImage(1)">
+                <img src="map.png" alt="Map/Drawing">
+            </button>
+            <button class="image-btn btn2" onclick="changeImage(2)">
+                <img src="group.png" alt="Group of People">
+            </button>
+            <button class="image-btn btn3" onclick="changeImage(3)">
+                <img src="toilet.png" alt="Toilet Sign">
+            </button>
+        </div>
+        <br>
+        <p id="installMsg" class="install-msg">Tryk på <b>Del</b> og vælg <b>Føj til hjemmeskærm</b> for at gemme som en app</p>
+        <button id="installBtn" class="install-btn">Installer som App</button>
+    </div>
+
+    <script>
+        function changeImage(imageIndex) {
+            const imageElement = document.getElementById("displayImage");
+
+            if (imageIndex === 1) {
+                imageElement.src = "occ-oversigt.png";
+            } else if (imageIndex === 2) {
+                imageElement.src = "occ-staevne.png";
+            } else if (imageIndex === 3) {
+                imageElement.src = "occ-toiletter.png";
+            }
+        }
+
+        // ✅ Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker Registered'))
+                .catch(error => console.log('Service Worker Registration Failed:', error));
+        }
+    </script>
+
+    <script>
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+        const installMsg = document.getElementById('installMsg');
+
+        // ✅ Check if app is already installed
+        if (window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: minimal-ui)').matches || navigator.standalone) {
+            console.log('App is already installed');
+            installBtn.style.display = 'none';
+            installMsg.style.display = 'none';
+        } else {
+            // ✅ Listen for install prompt
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installBtn.style.display = 'block';
+
+                installBtn.addEventListener('click', () => {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted install');
+                            installBtn.style.display = 'none';
+                            installMsg.style.display = 'none';
+                        } else {
+                            console.log('User dismissed install');
+                        }
+                        deferredPrompt = null;
+                    });
+                });
+            });
+
+            // ✅ If `beforeinstallprompt` never fires, show manual instructions
+            setTimeout(() => {
+                if (!deferredPrompt) {
+                    installMsg.style.display = 'block';
+                }
+            }, 5000); // Wait 5 seconds before showing message
+        }
+
+        // ✅ Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker Registered'))
+                .catch(error => console.log('Service Worker Registration Failed:', error));
+        }
+    </script>
+</body>
+</html>
