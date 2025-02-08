@@ -1,7 +1,7 @@
 {
-    "name": "Simple PWA",
-    "short_name": "PWA",
-    "description": "A simple installable PWA",
+    "name": "Regionalstævne 2025",
+    "short_name": "OCC 2025",
+    "description": "Oversigt til regionalstævnet 2025",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
