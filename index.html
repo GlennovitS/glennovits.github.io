@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Simple Mobile Page</title>
+    <title>Simple PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
     <style>
         * {
             margin: 0;
@@ -51,15 +53,59 @@
             object-fit: cover;
             touch-action: manipulation;
         }
+
+        .install-btn {
+            display: none;
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #007aff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Regionalstævne 2025</h1>
-        <h2>Odense Congress Center</h2>
+        <h1>Awesome Title</h1>
+        <h2>A simple subtitle goes here</h2>
         <div class="image-container">
             <img src="occ-oversigt.png" alt="Oversigtstegning over Odense Congress Center">
         </div>
+        <button id="installBtn" class="install-btn">Install App</button>
     </div>
+
+    <script>
+        // ✅ Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker Registered'))
+                .catch(error => console.log('Service Worker Registration Failed:', error));
+        }
+
+        // ✅ PWA Install Button Logic
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'block';
+
+            installBtn.addEventListener('click', () => {
+                installBtn.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(choiceResult => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User installed the app');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        });
+
+    </script>
 </body>
 </html>
