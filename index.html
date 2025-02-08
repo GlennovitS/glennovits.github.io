@@ -92,8 +92,8 @@
         .image-btn.active.btn4 { background-color: #7ab7cf; } 
 
         .image-btn img {
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
         }
     </style>
 </head>
@@ -118,12 +118,30 @@
             <img src="toilet.png" alt="Toilet">
         </button>
         <button class="image-btn btn3" onclick="changeImage(2, this)">
-            <img src="firstaid.png" alt="Førstehjælp">
+            <img src="doctor.png" alt="Førstehjælp">
         </button>
         <button class="image-btn btn4" onclick="changeImage(3, this)">
             <img src="info.png" alt="Information">
         </button>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const installMsg = document.getElementById("installMsg");
+            const installBtn = document.getElementById("installBtn");
+
+            function hideInstallPrompt() {
+                if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone) {
+                    installMsg.style.display = "none";
+                    installBtn.style.display = "none";
+                }
+            }
+
+            hideInstallPrompt();
+
+            window.matchMedia("(display-mode: standalone)").addEventListener("change", hideInstallPrompt);
+        });
+    </script>
 
     <script>
         function changeImage(imageIndex, clickedButton) {
