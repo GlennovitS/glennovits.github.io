@@ -120,13 +120,13 @@
         <button class="image-btn btn1 active" onclick="changeImage(1, this)">
             <img src="map.png" alt="Oversigtskort">
         </button>
-        <button class="image-btn btn2" onclick="changeImage(3, this)">
+        <button class="image-btn btn2" onclick="changeImage(2, this)">
             <img src="toilet.png" alt="Toilet">
         </button>
-        <button class="image-btn btn3" onclick="changeImage(2, this)">
+        <button class="image-btn btn3" onclick="changeImage(3, this)">
             <img src="doctor.png" alt="Førstehjælp">
         </button>
-        <button class="image-btn btn4" onclick="changeImage(3, this)">
+        <button class="image-btn btn4" onclick="changeImage(4, this)">
             <img src="info.png" alt="Information">
         </button>
     </div>
@@ -162,11 +162,11 @@
             if (imageIndex === 1) {
                 imageElement.src = "occ-oversigt.png";
             } else if (imageIndex === 2) {
-                imageElement.src = "occ-staevne.png";
+                imageElement.src = "occ-toiletter.png";
             } else if (imageIndex === 3) {
-                imageElement.src = "occ-toiletter.png";
+                imageElement.src = "occ-firstaid.png";
             } else if (imageIndex === 4) {
-                imageElement.src = "occ-toiletter.png";
+                imageElement.src = "occ-oversigt.png";
             }
 
             setActiveButton(clickedButton);
